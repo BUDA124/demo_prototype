@@ -11,7 +11,7 @@ interface UniqueUsersData {
 }
 
 export default function DailyUniqueUsersTarget() {
-  const targetUniqueUsers = 1000; // Define your daily target for unique users
+  const targetUniqueUsers = 8500; // Define your daily target for unique users
 
   const druidQuery = `
     SELECT
@@ -110,7 +110,7 @@ export default function DailyUniqueUsersTarget() {
               Daily Unique Users Target
             </h3>
             <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-              Target for unique users on 2016-06-27
+              Target of unique users editing Wikipedia
             </p>
           </div>
           <div className="relative inline-block">
@@ -152,7 +152,7 @@ export default function DailyUniqueUsersTarget() {
           </span>
         </div>
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-            On 2016-06-27, {currentUniqueUsers} unique users edited Wikipedia, aiming for {targetUniqueUsers}.
+            {currentUniqueUsers} unique users edited Wikipedia, aiming for {targetUniqueUsers}.
         </p>
       </div>
 
