@@ -4,34 +4,6 @@ import MonthlyTarget from "../../components/ecommerce/MonthlyTarget";
 import RecentOrders from "../../components/ecommerce/RecentOrders";
 import DemographicCard from "../../components/ecommerce/DemographicCard";
 import PageMeta from "../../components/common/PageMeta";
-import useDruidQuery from "../../hooks/useDruidQuery";
-
-// Define la interfaz para los datos esperados de la consulta de Druid
-interface EventCountData {
-  event_count: number;
-}
-
-const DruidMetrics = () => {
-  // Ejemplo de consulta: Contar el número total de eventos en el datasource 'wikiticker'
-  // Especificamos el tipo de datos esperado para el hook
-  const { data, loading, error } = useDruidQuery<EventCountData>('SELECT COUNT(*) as event_count FROM wikipedia');
-
-  if (loading) return <p>Cargando métricas de Druid...</p>;
-  if (error) return <p className="text-red-500">Error al cargar métricas: {error}</p>;
-
-  // Extraer la métrica del primer resultado
-  // TypeScript ahora sabe que `data[0]` tendrá la propiedad `event_count`
-  const eventCount = data.length > 0 ? data[0].event_count : 0;
-
-  return (
-    <div className="bg-white dark:bg-boxdark shadow-md rounded p-4">
-      <h3 className="text-lg font-semibold">Métricas de Druid</h3>
-      <p className="text-2xl font-bold">{eventCount.toLocaleString()}</p>
-      <p className="text-sm text-gray-500">Eventos totales en Druid</p>
-    </div>
-  );
-};
-
 
 export default function Home() {
   return (
@@ -45,9 +17,7 @@ export default function Home() {
       </h2>
       <div className="grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 space-y-6 xl:col-span-7">
-          {/* Reemplazamos EcommerceMetrics con nuestro nuevo componente */}
-          <DruidMetrics />
-
+          {}
           <MonthlySalesChart />
         </div>
 
