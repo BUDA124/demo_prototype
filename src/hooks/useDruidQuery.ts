@@ -21,18 +21,31 @@ const useDruidQuery = <T,>(query: string) => {
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.details || 'Error al obtener los datos');
+          let errorDetails = 'Error al obtener los datos';
+          try {
+            const errorData = await response.json();
+            if (errorData && errorData.details) {
+              errorDetails = typeof errorData.details === 'object'
+                ? JSON.stringify(errorData.details)
+                : errorData.details;
+            } else if (errorData) {
+              errorDetails = JSON.stringify(errorData);
+            }
+          } catch (jsonError) {
+            console.error("Failed to parse error response as JSON:", jsonError);
+            errorDetails = `Error: ${response.status} ${response.statusText}`;
+          }
+          throw new Error(errorDetails);
         }
 
         const result = await response.json();
-        // El resultado se asigna directamente, asumiendo que la API devuelve un array del tipo esperado.
         setData(result);
-      } catch (err: unknown) { // Usamos 'unknown' para manejar el error de forma segura.
+      } catch (err: unknown) {
+        console.error("Druid query failed:", err); // Log the original error
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError('Ocurrió un error inesperado');
+          setError('Ocurrió un error inesperado: ' + String(err)); // Ensure it's a string
         }
       } finally {
         setLoading(false);

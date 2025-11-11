@@ -1,24 +1,5 @@
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
-version: "3.7"
-
 volumes:
+  metadata_data: {}
   middle_var: {}
   historical_var: {}
   broker_var: {}
@@ -26,15 +7,26 @@ volumes:
   router_var: {}
   druid_shared: {}
 
-
 services:
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    volumes:
+      - metadata_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: FoolishPassword
+      POSTGRES_USER: druid
+      POSTGRES_DB: druid
+
   zookeeper:
     container_name: zookeeper
-    image: zookeeper:3.5
+    image: zookeeper:3.8
     ports:
       - "2181:2181"
     environment:
-      - ZOO_MY_ID=1
+      ZOO_MY_ID: 1
 
   coordinator:
     image: apache/druid:29.0.0
@@ -44,12 +36,17 @@ services:
       - coordinator_var:/opt/druid/var
     depends_on:
       - zookeeper
+      - postgres
     ports:
       - "8081:8081"
     command:
       - coordinator
     env_file:
       - environment
+    environment:
+      DRUID_XMS: 2g
+      DRUID_XMX: 2g
+      DRUID_MAXDIRECTMEMORYSIZE: 2g
 
   broker:
     image: apache/druid:29.0.0
@@ -58,6 +55,7 @@ services:
       - broker_var:/opt/druid/var
     depends_on:
       - zookeeper
+      - postgres
       - coordinator
     ports:
       - "8082:8082"
@@ -65,6 +63,10 @@ services:
       - broker
     env_file:
       - environment
+    environment:
+      DRUID_XMS: 2g
+      DRUID_XMX: 2g
+      DRUID_MAXDIRECTMEMORYSIZE: 2g
 
   historical:
     image: apache/druid:29.0.0
@@ -72,8 +74,9 @@ services:
     volumes:
       - druid_shared:/opt/shared
       - historical_var:/opt/druid/var
-    depends_on: 
+    depends_on:
       - zookeeper
+      - postgres
       - coordinator
     ports:
       - "8083:8083"
@@ -81,6 +84,10 @@ services:
       - historical
     env_file:
       - environment
+    environment:
+      DRUID_XMS: 2g
+      DRUID_XMX: 2g
+      DRUID_MAXDIRECTMEMORYSIZE: 2g
 
   middlemanager:
     image: apache/druid:29.0.0
@@ -88,8 +95,9 @@ services:
     volumes:
       - druid_shared:/opt/shared
       - middle_var:/opt/druid/var
-    depends_on: 
+    depends_on:
       - zookeeper
+      - postgres
       - coordinator
     ports:
       - "8091:8091"
@@ -98,6 +106,12 @@ services:
       - middleManager
     env_file:
       - environment
+    environment:
+      druid_worker_capacity: 3
+      druid_indexer_runner_javaOpts: "-server -Xms1g -Xmx1g -XX:MaxDirectMemorySize=1g"
+      DRUID_XMS: 1g
+      DRUID_XMX: 1g
+      DRUID_MAXDIRECTMEMORYSIZE: 1g
 
   router:
     image: apache/druid:29.0.0
@@ -106,6 +120,7 @@ services:
       - router_var:/opt/druid/var
     depends_on:
       - zookeeper
+      - postgres
       - coordinator
     ports:
       - "8888:8888"
@@ -113,3 +128,7 @@ services:
       - router
     env_file:
       - environment
+    environment:
+      DRUID_XMS: 1g
+      DRUID_XMX: 1g
+      DRUID_MAXDIRECTMEMORYSIZE: 1g
