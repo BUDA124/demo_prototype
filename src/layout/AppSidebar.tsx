@@ -4,11 +4,9 @@ import { Link, useLocation } from "react-router";
 // Assume these icons are imported from an icon library
 import {
   BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  ListIcon,
   PageIcon,
   PieChartIcon,
   TableIcon,
@@ -31,16 +29,6 @@ const navItems: NavItem[] = [
     subItems: [{ name: "Ecommerce", path: "/", pro: false }],
   },
   {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/calendar",
-  },
-  {
-    name: "Forms",
-    icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  },
-  {
     name: "Tables",
     icon: <TableIcon />,
     subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
@@ -50,7 +38,6 @@ const navItems: NavItem[] = [
     icon: <PageIcon />,
     subItems: [
       { name: "Blank Page", path: "/blank", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
     ],
   },
 ];
@@ -77,7 +64,7 @@ const othersItems: NavItem[] = [
     ],
   },
   {
-    icon: <BoltIcon />, // Using BoltIcon as a placeholder
+    icon: <BoltIcon />,
     name: "Database",
     subItems: [
       { name: "Druid Data", path: "/druid-data", pro: false, new: true },
