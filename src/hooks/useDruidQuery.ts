@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 
-const useDruidQuery = (query: string) => {
-  const [data, setData] = useState<any[]>([]);
+// Definimos un tipo genérico para que el hook pueda ser reutilizado con diferentes estructuras de datos.
+type DruidData<T> = T;
+
+const useDruidQuery = <T,>(query: string) => {
+  // Usamos el tipo genérico para el estado de los datos.
+  const [data, setData] = useState<DruidData<T>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,9 +26,14 @@ const useDruidQuery = (query: string) => {
         }
 
         const result = await response.json();
+        // El resultado se asigna directamente, asumiendo que la API devuelve un array del tipo esperado.
         setData(result);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) { // Usamos 'unknown' para manejar el error de forma segura.
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Ocurrió un error inesperado');
+        }
       } finally {
         setLoading(false);
       }
