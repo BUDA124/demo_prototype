@@ -1,0 +1,30 @@
+# Common configuration for all Druid services
+# This file is referenced by the docker-compose.yml
+
+# Zookeeper
+druid_zk_service_host=zookeeper
+
+# Metadata storage (PostgreSQL)
+druid_metadata_storage_type=postgresql
+druid_metadata_storage_connector_connectURI=jdbc:postgresql://postgres:5432/druid
+druid_metadata_storage_connector_user=druid
+druid_metadata_storage_connector_password=FoolishPassword
+
+# Deep storage (local, shared between services)
+druid_storage_type=local
+druid_storage_storageDirectory=/opt/shared/storage
+
+# Indexing logs
+druid_indexer_logs_type=file
+druid_indexer_logs_directory=/opt/shared/indexing-logs
+
+# Set the heap size for the Druid services
+# You can adjust these based on your machine's available RAM
+druid_broker_runtime_jvm_heap_size=512m
+druid_coordinator_runtime_jvm_heap_size=512m
+druid_historical_runtime_jvm_heap_size=512m
+druid_middleManager_runtime_jvm_heap_size=512m
+druid_router_runtime_jvm_heap_size=512m
+
+# Java options
+DRUID_JAVA_OPTS="-Duser.timezone=UTC -Dfile.encoding=UTF-8"
